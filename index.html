@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="StoneTrade">
+<title>StoneTrade Pro</title>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#0c0c0c;--s1:#131313;--s2:#1a1a1a;--s3:#212121;
+  --bd:#252525;--bd2:#323232;
+  --gold:#c8a24a;--gold2:#e0c070;--gdim:rgba(200,162,74,.12);--gg:rgba(200,162,74,.07);
+  --tx:#ede6d4;--tx2:#857a66;--tx3:#4a4338;
+  --green:#38976a;--gbg:rgba(56,151,106,.09);--gbd:rgba(56,151,106,.28);
+  --red:#d44c3a;--rbg:rgba(212,76,58,.09);--rbd:rgba(212,76,58,.28);
+  --amb:#c07828;--abg:rgba(192,120,40,.09);--abd:rgba(192,120,40,.28);
+  --blu:#3e72a8;--bbg:rgba(62,114,168,.09);--bbd:rgba(62,114,168,.28);
+  --fm:'Vazirmatn',sans-serif;--mono:'JetBrains Mono',monospace;
+}
+html,body,#root{height:100%;background:var(--bg);}
+body{font-family:var(--fm);color:var(--tx);-webkit-font-smoothing:antialiased;}
+.app{max-width:430px;margin:0 auto;min-height:100svh;display:flex;flex-direction:column;}
+.sb{height:env(safe-area-inset-top,44px);background:var(--s1);}
+.bsafe{height:calc(env(safe-area-inset-bottom,0px)+20px);}
+.bar{background:var(--s1);border-bottom:1px solid var(--bd);padding:12px 18px;position:sticky;top:env(safe-area-inset-top,44px);z-index:99;}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo-i{font-size:22px;}
+.logo-name{font-size:18px;font-weight:800;color:var(--gold2);}
+.logo-sub{font-family:var(--mono);font-size:8px;color:var(--tx3);letter-spacing:.14em;margin-top:3px;}
+.tabs{display:flex;background:var(--s1);border-bottom:1px solid var(--bd);}
+.tab{flex:1;padding:11px 0;font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--tx2);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:all .15s;text-transform:uppercase;}
+.tab.on{color:var(--gold);border-bottom-color:var(--gold);}
+.scroll{flex:1;overflow-y:auto;padding:14px 14px 100px;-webkit-overflow-scrolling:touch;}
+.mtoggle{display:flex;background:var(--s3);border-radius:10px;padding:3px;gap:2px;margin-bottom:12px;}
+.mbtn{flex:1;font-family:var(--mono);font-size:9px;padding:9px 6px;border-radius:8px;border:none;cursor:pointer;background:transparent;color:var(--tx2);transition:all .15s;line-height:1.4;text-align:center;text-transform:uppercase;}
+.mbtn.on{background:var(--gold);color:#0c0c0c;font-weight:700;}
+.card{background:var(--s1);border:1px solid var(--bd);border-radius:13px;margin-bottom:10px;overflow:hidden;}
+.card-h{padding:11px 16px 9px;border-bottom:1px solid var(--bd);background:var(--s2);}
+.card-step{font-family:var(--mono);font-size:8px;color:var(--gold);letter-spacing:.16em;text-transform:uppercase;}
+.card-title{font-size:14px;font-weight:700;color:var(--tx);}
+.card-sub{font-family:var(--mono);font-size:9px;color:var(--tx3);margin-top:2px;}
+.card-b{padding:13px 14px;display:flex;flex-direction:column;gap:11px;}
+.fld{display:flex;flex-direction:column;gap:5px;}
+.lrow{display:flex;justify-content:space-between;align-items:baseline;}
+.lfa{font-size:13px;font-weight:600;color:var(--tx2);}
+.len{font-family:var(--mono);font-size:9px;color:var(--tx3);}
+.fnote{font-family:var(--mono);font-size:9px;color:var(--tx3);margin-top:2px;}
+.inp,.sel{width:100%;padding:12px 14px;background:var(--s2);border:1.5px solid var(--bd2);border-radius:10px;color:var(--tx);font-family:var(--fm);font-size:15px;outline:none;-webkit-appearance:none;appearance:none;transition:border .15s,box-shadow .15s;}
+.inp:focus,.sel:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gg);}
+.inp::placeholder{color:var(--tx3);}
+.sel{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23857a66' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:left 13px center;padding-left:32px;cursor:pointer;}
+.sel option{background:var(--s2);}
+input[type=number]::-webkit-inner-spin-button{opacity:.3;}
+.urow{display:flex;gap:8px;}
+.urow .inp{flex:1;}
+.usel{min-width:82px;padding:12px 8px;background:var(--s2);border:1.5px solid var(--bd2);border-radius:10px;color:var(--gold2);font-family:var(--mono);font-size:11px;font-weight:600;outline:none;-webkit-appearance:none;appearance:none;cursor:pointer;text-align:center;transition:border .15s;}
+.usel:focus{border-color:var(--gold);}
+.usel option{background:var(--s2);color:var(--tx);}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.ogrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.obtn{background:var(--s2);border:1.5px solid var(--bd2);border-radius:10px;padding:9px 10px;display:flex;align-items:center;gap:7px;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent;text-align:left;width:100%;}
+.obtn.on{border-color:var(--gold);background:var(--gdim);}
+.obtn:active{transform:scale(.97);}
+.oflag{font-size:18px;flex-shrink:0;}
+.olabel{font-size:11px;font-weight:600;color:var(--tx2);line-height:1.3;}
+.obtn.on .olabel{color:var(--gold2);}
+.via-tag{font-family:var(--mono);font-size:8px;color:var(--amb);background:var(--abg);border:1px solid var(--abd);padding:1px 5px;border-radius:4px;margin-top:3px;display:inline-block;}
+.info{background:var(--bbg);border:1px solid var(--bbd);border-radius:10px;padding:10px 12px;display:flex;gap:9px;align-items:flex-start;}
+.info-text{font-family:var(--mono);font-size:9px;color:var(--blu);line-height:1.7;}
+.tariff{background:var(--s3);border:1px solid var(--bd2);border-radius:10px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;}
+.tariff-l{font-family:var(--mono);font-size:9px;color:var(--tx3);}
+.tariff-r{font-family:var(--mono);font-size:20px;font-weight:700;color:var(--gold);}
+.btn{width:100%;padding:15px;background:var(--gold);color:#0c0c0c;border:none;border-radius:12px;font-family:var(--fm);font-size:16px;font-weight:800;cursor:pointer;margin-bottom:9px;-webkit-tap-highlight-color:transparent;transition:all .15s;}
+.btn:active{transform:scale(.97);background:var(--gold2);}
+.btn-ghost{width:100%;padding:12px;background:transparent;color:var(--tx2);border:1.5px solid var(--bd2);border-radius:12px;font-family:var(--fm);font-size:14px;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.btn-ghost:active{background:var(--s2);}
+.btn-save{width:100%;padding:12px;background:var(--gdim);color:var(--gold2);border:1.5px solid rgba(200,162,74,.28);border-radius:12px;font-family:var(--fm);font-size:14px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.btn-save:active{background:rgba(200,162,74,.2);}
+.hero{border-radius:14px;padding:24px 18px;text-align:center;margin-bottom:10px;}
+.hero.blue{background:var(--bbg);border:1.5px solid var(--bbd);}
+.hero.red{background:var(--rbg);border:1.5px solid var(--rbd);}
+.hero-tag{font-family:var(--mono);font-size:8px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:10px;}
+.hero-tag.blue{color:var(--gold2);}.hero-tag.red{color:var(--red);}
+.hero-big{font-size:46px;font-weight:800;line-height:1;letter-spacing:-.02em;}
+.hero-big.blue{color:var(--gold2);}.hero-big.red{color:var(--red);font-size:28px;}
+.hero-unit{font-family:var(--mono);font-size:11px;color:var(--tx2);margin-top:6px;}
+.hero-also{font-family:var(--mono);font-size:10px;color:var(--tx3);margin-top:5px;line-height:1.6;}
+.bk{background:var(--s1);border:1px solid var(--bd);border-radius:13px;overflow:hidden;margin-bottom:10px;}
+.bk-h{padding:10px 16px;border-bottom:1px solid var(--bd);background:var(--s2);font-size:13px;font-weight:700;color:var(--tx);}
+.bk-b{padding:2px 16px;}
+.brow{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--bd);}
+.brow:last-child{border:none;}
+.brow.sep{border-top:1px solid var(--bd2);padding-top:13px;margin-top:2px;}
+.bk-fa{font-size:13px;color:var(--tx2);}
+.bk-en{font-family:var(--mono);font-size:9px;color:var(--tx3);margin-top:1px;}
+.bv{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--tx);}
+.bv.g{color:var(--green);}.bv.r{color:var(--red);}.bv.gold{color:var(--gold2);font-size:16px;}
+.div{height:1px;background:linear-gradient(90deg,var(--gold),transparent);margin:14px 0;}
+.principle{padding:12px 15px;border-right:3px solid var(--gold);background:var(--gdim);border-radius:0 10px 10px 0;font-family:var(--mono);font-size:10px;color:var(--gold);line-height:1.8;margin-top:14px;}
+.trade{background:var(--s1);border:1px solid var(--bd);border-radius:13px;padding:14px;margin-bottom:9px;}
+.trade-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
+.trade-stone{font-size:14px;font-weight:700;color:var(--tx);}
+.trade-route{font-family:var(--mono);font-size:10px;color:var(--tx3);margin-top:2px;}
+.tgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+.t-lbl{font-family:var(--mono);font-size:8px;color:var(--tx3);letter-spacing:.1em;text-transform:uppercase;}
+.t-val{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--tx2);margin-top:2px;}
+.sbadge{font-family:var(--mono);font-size:9px;font-weight:700;padding:3px 9px;border-radius:8px;flex-shrink:0;}
+.sE{background:var(--gbg);color:var(--green);border:1px solid var(--gbd);}
+.sC{background:var(--abg);color:var(--amb);border:1px solid var(--abd);}
+.sX{background:var(--rbg);color:var(--red);border:1px solid var(--rbd);}
+.dg{color:var(--green);font-weight:700;}.dr{color:var(--red);font-weight:700;}
+.toast{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px)+18px);left:50%;transform:translateX(-50%);background:var(--s2);border:1px solid var(--gbd);color:var(--green);font-family:var(--mono);font-size:11px;padding:11px 20px;border-radius:20px;z-index:999;white-space:nowrap;animation:tIn .22s ease;}
+@keyframes tIn{from{transform:translateX(-50%) translateY(10px);opacity:0}to{transform:translateX(-50%) translateY(0);opacity:1}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState } = React;
+const SQ = 10.7639, TAX = 0.26;
+const ORIGINS = [
+  {code:"IR",fa:"ایران",en:"Iran",flag:"🇮🇷",via:"AE"},
+  {code:"IN",fa:"هند",en:"India",flag:"🇮🇳",via:null},
+  {code:"CN",fa:"چین",en:"China",flag:"🇨🇳",via:null},
+  {code:"TR",fa:"ترکیه",en:"Turkey",flag:"🇹🇷",via:null},
+  {code:"BR",fa:"برزیل",en:"Brazil",flag:"🇧🇷",via:null},
+  {code:"GR",fa:"یونان",en:"Greece",flag:"🇬🇷",via:null},
+  {code:"IT",fa:"ایتالیا",en:"Italy",flag:"🇮🇹",via:null},
+  {code:"MX",fa:"مکزیک",en:"Mexico",flag:"🇲🇽",via:null},
+];
+const OCEAN={"IR-AE":5,"AE-US":13,"IN-US":11.5,"CN-US":13,"TR-US":15.5,"BR-US":10,"GR-US":17,"IT-US":15.5,"MX-US":7.5};
+const US_PORT=9.5;
+const STONES=[
+  {id:"travertine",fa:"تراورتن",en:"Travertine",rate:4.2,hts:"6802.21.10"},
+  {id:"marble",fa:"مرمر",en:"Marble",rate:4.9,hts:"6802.10.00"},
+  {id:"granite",fa:"گرانیت",en:"Granite",rate:3.7,hts:"6802.23.00"},
+  {id:"limestone",fa:"سنگ آهک",en:"Limestone",rate:4.2,hts:"6802.21.50"},
+  {id:"slate",fa:"اسلیت",en:"Slate",rate:3.3,hts:"6803.00.00"},
+  {id:"other",fa:"سایر سنگ",en:"Other Stone",rate:6.5,hts:"6802.99.00"},
+];
+const STATES=[
+  {c:"CA",n:"California",t:8.68},{c:"TX",n:"Texas",t:8.19},{c:"FL",n:"Florida",t:7.01},
+  {c:"NY",n:"New York",t:8.52},{c:"IL",n:"Illinois",t:8.82},{c:"PA",n:"Pennsylvania",t:6.34},
+  {c:"OH",n:"Ohio",t:7.23},{c:"GA",n:"Georgia",t:7.35},{c:"NC",n:"North Carolina",t:6.97},
+  {c:"MI",n:"Michigan",t:6.00},{c:"NJ",n:"New Jersey",t:6.60},{c:"VA",n:"Virginia",t:5.75},
+  {c:"WA",n:"Washington",t:9.29},{c:"AZ",n:"Arizona",t:8.37},{c:"MA",n:"Massachusetts",t:6.25},
+  {c:"TN",n:"Tennessee",t:9.55},{c:"MO",n:"Missouri",t:8.18},{c:"MD",n:"Maryland",t:6.00},
+  {c:"WI",n:"Wisconsin",t:5.42},{c:"CO",n:"Colorado",t:7.77},{c:"MN",n:"Minnesota",t:7.47},
+  {c:"SC",n:"South Carolina",t:7.43},{c:"AL",n:"Alabama",t:9.22},{c:"LA",n:"Louisiana",t:9.55},
+  {c:"KY",n:"Kentucky",t:6.00},{c:"OR",n:"Oregon",t:0.00},{c:"OK",n:"Oklahoma",t:8.95},
+  {c:"CT",n:"Connecticut",t:6.35},{c:"UT",n:"Utah",t:7.19},{c:"NV",n:"Nevada",t:8.23},
+  {c:"IA",n:"Iowa",t:6.94},{c:"AR",n:"Arkansas",t:9.44},{c:"MS",n:"Mississippi",t:7.07},
+  {c:"KS",n:"Kansas",t:8.68},{c:"NM",n:"New Mexico",t:7.82},{c:"NE",n:"Nebraska",t:6.94},
+  {c:"ID",n:"Idaho",t:6.02},{c:"WV",n:"West Virginia",t:6.50},{c:"HI",n:"Hawaii",t:4.44},
+  {c:"NH",n:"New Hampshire",t:0.00},{c:"ME",n:"Maine",t:5.50},{c:"MT",n:"Montana",t:0.00},
+  {c:"RI",n:"Rhode Island",t:7.00},{c:"DE",n:"Delaware",t:0.00},{c:"SD",n:"South Dakota",t:6.40},
+  {c:"ND",n:"North Dakota",t:6.96},{c:"AK",n:"Alaska",t:1.76},{c:"VT",n:"Vermont",t:6.18},
+  {c:"WY",n:"Wyoming",t:5.44},
+];
+
+function getCosts(originCode,stoneId,buyM2){
+  const orig=ORIGINS.find(o=>o.code===originCode);
+  const stone=STONES.find(s=>s.id===stoneId)||STONES[0];
+  const legs=[];let freight=0;
+  if(orig.via==="AE"){
+    const l1=OCEAN["IR-AE"]+buyM2*0.015;
+    const l2=OCEAN["AE-US"]+buyM2*0.012;
+    legs.push({fa:"ایران → دبی",en:"Iran → Dubai (ocean+ins)",usd:+l1.toFixed(2)});
+    legs.push({fa:"دبی → آمریکا",en:"Dubai → USA (ocean+ins)",usd:+l2.toFixed(2)});
+    freight=l1+l2;
+  } else {
+    const key=originCode+"-US";
+    const raw=OCEAN[key]||12;
+    const ins=buyM2*0.012;
+    legs.push({fa:orig.fa+" → آمریکا",en:orig.en+" → USA",usd:+(raw+ins).toFixed(2)});
+    freight=raw+ins;
+  }
+  legs.push({fa:"گمرک و بندر آمریکا",en:"US Port + CBP",usd:US_PORT});
+  const tariff=buyM2*stone.rate/100;
+  legs.push({fa:"تعرفه "+stone.rate+"% ("+stone.hts+")",en:"US Tariff",usd:+tariff.toFixed(2)});
+  return{total:+(freight+US_PORT+tariff).toFixed(2),legs,stone};
+}
+function calcMinSale(buyM2,totalNetUSD,totalM2,originCode,stoneId){
+  const netPerM2=totalNetUSD/totalM2;
+  const{total:costs,legs,stone}=getCosts(originCode,stoneId,buyM2);
+  const grossPerM2=netPerM2/(1-TAX);
+  const saleM2=buyM2+costs+grossPerM2;
+  return{ok:true,mode:"minsale",saleM2:+saleM2.toFixed(4),costsM2:costs,netM2:+netPerM2.toFixed(4),legs,stone,buyM2,totalM2,
+    totalBuy:+(buyM2*totalM2).toFixed(0),totalSale:+(saleM2*totalM2).toFixed(0),
+    totalCosts:+(costs*totalM2).toFixed(0),totalTax:+(grossPerM2*TAX*totalM2).toFixed(0),totalNet:+totalNetUSD.toFixed(0)};
+}
+function calcMaxBuy(saleM2,totalNetUSD,totalM2,originCode,stoneId){
+  const netPerM2=totalNetUSD/totalM2;
+  const grossPerM2=netPerM2/(1-TAX);
+  let buy=saleM2*0.5;
+  for(let i=0;i<12;i++){const{total:c}=getCosts(originCode,stoneId,Math.max(buy,0));buy=saleM2-c-grossPerM2;}
+  const{total:costs,legs,stone}=getCosts(originCode,stoneId,Math.max(buy,0));
+  return{ok:buy>0,mode:"maxbuy",buyM2:+buy.toFixed(4),costsM2:costs,netM2:+netPerM2.toFixed(4),legs,stone,saleM2,totalM2,
+    totalBuy:+(buy*totalM2).toFixed(0),totalSale:+(saleM2*totalM2).toFixed(0),
+    totalCosts:+(costs*totalM2).toFixed(0),totalTax:+(grossPerM2*TAX*totalM2).toFixed(0),totalNet:+totalNetUSD.toFixed(0)};
+}
+function toM2price(v,unit,pm2){if(unit==="sqft")return v*SQ;if(unit==="piece")return v/pm2;return v;}
+function toM2qty(v,unit,pm2){if(unit==="sqft")return v/SQ;if(unit==="piece")return v*pm2;return v;}
+function d(v){return"$"+Number(v).toFixed(2);}
+function dall(m2val,pm2){return d(m2val)+"/m²  ·  "+d(m2val/SQ)+"/sqft"+(pm2>0?"  ·  "+d(m2val*pm2)+"/pc":"");}
+
+function L({fa,en}){return<div className="lrow"><span className="lfa">{fa}</span><span className="len">{en}</span></div>;}
+function F({fa,en,note,children}){return<div className="fld"><L fa={fa} en={en}/>{children}{note&&<div className="fnote">{note}</div>}</div>;}
+function USel({v,set}){return<select className="usel" value={v} onChange={e=>set(e.target.value)}><option value="m2">m²</option><option value="sqft">sqft</option><option value="piece">دونه</option></select>;}
+function BRow({fa,en,val,cls}){return<div className="brow"><div><div className="bk-fa">{fa}</div>{en&&<div className="bk-en">{en}</div>}</div><div className={"bv "+(cls||"")}>{val}</div></div>;}
+
+let _id=300;
+const SEED=[
+  {id:297,stone:"Travertine",orig:"IR",dest:"California",status:"E",buy:"$4.18/sqft",sale:"$8.28/sqft",net:"+$10,000",date:"2025-10-15"},
+  {id:298,stone:"Marble",orig:"IN",dest:"Texas",status:"E",buy:"$3.50/sqft",sale:"$7.20/sqft",net:"+$8,200",date:"2025-12-01"},
+  {id:299,stone:"Granite",orig:"CN",dest:"New York",status:"C",buy:"$3.10/sqft",sale:"$6.80/sqft",net:"pending",date:"2026-01-20"},
+];
+
+function App(){
+  const[tab,setTab]=useState("calc");
+  const[mode,setMode]=useState("maxbuy");
+  const[trades,setTrades]=useState(SEED);
+  const[toast,setToast]=useState(null);
+  const[result,setResult]=useState(null);
+  const[origin,setOrigin]=useState("IR");
+  const[stone,setStone]=useState("travertine");
+  const[state,setState]=useState("CA");
+  const[vol,setVol]=useState("");
+  const[volUnit,setVolUnit]=useState("m2");
+  const[pieceM2,setPieceM2]=useState("");
+  const[priceA,setPriceA]=useState("");
+  const[priceAUnit,setPriceAUnit]=useState("sqft");
+  const[totalNet,setTotalNet]=useState("");
+  const[tStatus,setTStatus]=useState("C");
+
+  const orig=ORIGINS.find(o=>o.code===origin);
+  const stoneObj=STONES.find(s=>s.id===stone)||STONES[0];
+  const stateObj=STATES.find(s=>s.c===state);
+  const pm2=parseFloat(pieceM2)||1;
+  const needPc=priceAUnit==="piece"||volUnit==="piece";
+  const totalM2=toM2qty(parseFloat(vol)||0,volUnit,pm2);
+
+  function run(){
+    const pA=parseFloat(priceA),net=parseFloat(totalNet),v=parseFloat(vol);
+    if(!pA||pA<=0){flash("قیمت وارد کنید");return;}
+    if(!net||net<=0){flash("سود هدف وارد کنید");return;}
+    if(!v||v<=0){flash("حجم وارد کنید");return;}
+    const pAM2=toM2price(pA,priceAUnit,pm2);
+    const res=mode==="maxbuy"?calcMaxBuy(pAM2,net,totalM2,origin,stone):calcMinSale(pAM2,net,totalM2,origin,stone);
+    setResult({...res,priceAUnit,pm2,stoneObj,stateObj});
+  }
+  function reset(){setPriceA("");setTotalNet("");setVol("");setResult(null);}
+  function saveT(){
+    if(!result)return;
+    const t={id:++_id,stone:result.stoneObj.en,orig:origin,dest:stateObj?.n||state,status:tStatus,
+      buy:result.mode==="maxbuy"?d(result.buyM2/SQ)+"/sqft":d(toM2price(parseFloat(priceA),priceAUnit,pm2)/SQ)+"/sqft",
+      sale:result.mode==="minsale"?d(result.saleM2/SQ)+"/sqft":d(toM2price(parseFloat(priceA),priceAUnit,pm2)/SQ)+"/sqft",
+      net:"+$"+result.totalNet.toLocaleString(),date:new Date().toISOString().slice(0,10)};
+    setTrades(p=>[t,...p]);flash("ذخیره شد ✓");
+  }
+  function flash(m){setToast(m);setTimeout(()=>setToast(null),2600);}
+  const r=result;
+
+  return(
+    <div className="app">
+      <div className="sb"/>
+      <div className="bar">
+        <div className="logo">
+          <span className="logo-i">🪨</span>
+          <div>
+            <div className="logo-name">StoneTrade Pro</div>
+            <div className="logo-sub">ALL PRICES IN USD · همه قیمت‌ها دلار</div>
+          </div>
+        </div>
+      </div>
+      <div className="tabs">
+        <button className={"tab"+(tab==="calc"?" on":"")} onClick={()=>setTab("calc")}>محاسبه · Calc</button>
+        <button className={"tab"+(tab==="trades"?" on":"")} onClick={()=>setTab("trades")}>معاملات ({trades.length})</button>
+      </div>
+      <div className="scroll">
+        {tab==="calc"&&<>
+          <div className="mtoggle">
+            <button className={"mbtn"+(mode==="maxbuy"?" on":"")} onClick={()=>{setMode("maxbuy");setResult(null);}}>
+              قیمت فروش دارم → حداکثر قیمت خرید<br/><span style={{fontSize:8,opacity:.7}}>Max Buy Price</span>
+            </button>
+            <button className={"mbtn"+(mode==="minsale"?" on":"")} onClick={()=>{setMode("minsale");setResult(null);}}>
+              قیمت خرید دارم → حداقل قیمت فروش<br/><span style={{fontSize:8,opacity:.7}}>Min Sale Price</span>
+            </button>
+          </div>
+
+          <div className="card">
+            <div className="card-h"><div className="card-step">① سنگ و مبدا · Stone & Origin</div><div className="card-title">نوع سنگ و کشور مبدا</div></div>
+            <div className="card-b">
+              <F fa="نوع سنگ" en="Stone Type">
+                <select className="sel" value={stone} onChange={e=>setStone(e.target.value)}>
+                  {STONES.map(s=><option key={s.id} value={s.id}>{s.fa} · {s.en}</option>)}
+                </select>
+              </F>
+              <div className="fld">
+                <L fa="کشور مبدا" en="Origin Country"/>
+                <div className="ogrid">
+                  {ORIGINS.map(o=>(
+                    <button key={o.code} className={"obtn"+(origin===o.code?" on":"")} onClick={()=>setOrigin(o.code)}>
+                      <span className="oflag">{o.flag}</span>
+                      <div><div className="olabel">{o.fa} · {o.en}</div>{o.via&&<span className="via-tag">via {o.via}</span>}</div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+              {orig?.via==="AE"&&<div className="info"><div className="info-text">مسیر: ایران → دبی → آمریکا (دو مرحله)<br/>Route: Iran → Dubai transit → USA</div></div>}
+            </div>
+          </div>
+
+          <div className="card">
+            <div className="card-h"><div className="card-step">② مقصد · Destination</div><div className="card-title">ایالت آمریکا</div></div>
+            <div className="card-b">
+              <F fa="ایالت مقصد" en="US Destination State">
+                <select className="sel" value={state} onChange={e=>setState(e.target.value)}>
+                  {STATES.map(s=><option key={s.c} value={s.c}>{s.n} — {s.t}% sales tax</option>)}
+                </select>
+              </F>
+              <div className="tariff">
+                <div><div className="tariff-l">تعرفه HTS آمریکا · US Import Tariff</div><div className="tariff-l" style={{marginTop:3}}>{stoneObj.hts}</div></div>
+                <div className="tariff-r">{stoneObj.rate}%</div>
+              </div>
+            </div>
+          </div>
+
+          <div className="card">
+            <div className="card-h"><div className="card-step">③ حجم · Volume</div><div className="card-title">متراژ یا تعداد کل</div></div>
+            <div className="card-b">
+              <F fa="حجم کل" en="Total Quantity">
+                <div className="urow">
+                  <input className="inp" type="number" placeholder="مثلاً ۵۰۰" value={vol} onChange={e=>setVol(e.target.value)} min="0"/>
+                  <USel v={volUnit} set={setVolUnit}/>
+                </div>
+              </F>
+              {needPc&&<F fa="اندازه هر دونه (m²)" en="Size per piece" note="مثلاً ۶۰×۶۰ سانتیمتر = 0.36">
+                <input className="inp" type="number" placeholder="0.36" value={pieceM2} onChange={e=>setPieceM2(e.target.value)} min="0" step="0.01"/>
+              </F>}
+              {vol&&totalM2>0&&volUnit!=="m2"&&<div className="fnote" style={{color:"var(--gold)"}}>{"= "+totalM2.toFixed(2)+" m²  ·  "+(totalM2*SQ).toFixed(1)+" sqft"}</div>}
+            </div>
+          </div>
+
+          <div className="card">
+            <div className="card-h">
+              <div className="card-step">④ قیمت و سود · Price & Profit</div>
+              <div className="card-title">{mode==="maxbuy"?"قیمت فروش + سود هدف":"قیمت خرید + سود هدف"}</div>
+              <div className="card-sub">همه مبالغ به دلار · All amounts in USD</div>
+            </div>
+            <div className="card-b">
+              <F fa={mode==="maxbuy"?"قیمت فروش (USD)":"قیمت خرید (USD)"} en={mode==="maxbuy"?"Sale Price per unit":"Buy Price per unit"}>
+                <div className="urow">
+                  <input className="inp" type="number" step="any" min="0" placeholder={mode==="maxbuy"?"مثلاً ۸.۰۰ به sqft":"مثلاً ۴۵.۰۰ به m²"} value={priceA} onChange={e=>setPriceA(e.target.value)}/>
+                  <USel v={priceAUnit} set={setPriceAUnit}/>
+                </div>
+              </F>
+              <F fa="سود خالص کل (USD)" en="Total Net Profit — whole shipment" note="کل سود بعد از همه هزینه‌ها و مالیات · after shipping, tariff and tax">
+                <input className="inp" type="number" step="any" min="0" placeholder="مثلاً ۵۰۰۰" value={totalNet} onChange={e=>setTotalNet(e.target.value)}/>
+              </F>
+            </div>
+          </div>
+
+          <button className="btn" onClick={run}>محاسبه · Calculate</button>
+          <button className="btn-ghost" onClick={reset}>پاک کردن · Reset</button>
+
+          {r&&<>
+            <div className="div"/>
+            {r.mode==="maxbuy"&&<div className={"hero "+(r.ok?"blue":"red")}>
+              <div className={"hero-tag "+(r.ok?"blue":"red")}>{r.ok?"حداکثر قیمت خرید · MAX BUY PRICE":"امکان‌پذیر نیست · NOT ACHIEVABLE"}</div>
+              {r.ok?<>
+                <div className="hero-big blue">{d(r.buyM2/SQ)}</div>
+                <div className="hero-unit">USD / sqft</div>
+                <div className="hero-also">{d(r.buyM2)} / m²{pm2>0?"  ·  "+d(r.buyM2*pm2)+" / piece":""}</div>
+              </>:<>
+                <div className="hero-big red">هزینه‌ها از قیمت فروش بیشتره</div>
+                <div style={{fontFamily:"var(--mono)",fontSize:10,color:"var(--red)",marginTop:8,lineHeight:1.8}}>
+                  هزینه حمل+گمرک+تعرفه: ${r.costsM2}/m²<br/>قیمت فروش رو بالاتر ببر یا سود هدف رو کم کن
+                </div>
+              </>}
+            </div>}
+            {r.mode==="minsale"&&<div className="hero blue">
+              <div className="hero-tag blue">حداقل قیمت فروش · MIN SALE PRICE</div>
+              <div className="hero-big blue">{d(r.saleM2/SQ)}</div>
+              <div className="hero-unit">USD / sqft</div>
+              <div className="hero-also">{d(r.saleM2)} / m²{pm2>0?"  ·  "+d(r.saleM2*pm2)+" / piece":""}</div>
+            </div>}
+
+            <div className="bk">
+              <div className="bk-h">هزینه‌های حمل و گمرک · Shipping + Tariff (per m²)</div>
+              <div className="bk-b">
+                {r.legs.map((leg,i)=><BRow key={i} fa={leg.fa} en={leg.en} val={"$"+leg.usd.toFixed(2)}/>)}
+                <BRow fa="جمع هزینه / m²" en="Total Costs per m²" val={"$"+r.costsM2} cls="r"/>
+              </div>
+            </div>
+
+            <div className="bk">
+              <div className="bk-h">{"کل محموله · Total Shipment — "+totalM2.toFixed(1)+" m²  ·  "+(totalM2*SQ).toFixed(0)+" sqft"}</div>
+              <div className="bk-b">
+                <div className="brow">
+                  <div><div className="bk-fa">قیمت خرید · Buy Price</div><div className="bk-en">per unit</div></div>
+                  <div style={{textAlign:"right"}}>
+                    <div className="bv">{dall(r.mode==="maxbuy"?r.buyM2:toM2price(parseFloat(priceA),priceAUnit,pm2),pm2)}</div>
+                    <div style={{fontFamily:"var(--mono)",fontSize:13,color:"var(--red)",fontWeight:700,marginTop:3}}>{"کل: $"+Number(r.totalBuy).toLocaleString()}</div>
+                  </div>
+                </div>
+                <BRow fa="کل هزینه حمل+گمرک+تعرفه" en="Total Shipping + Tariff" val={"−$"+Number(r.totalCosts).toLocaleString()} cls="r"/>
+                <div className="brow">
+                  <div><div className="bk-fa">قیمت فروش · Sale Price</div><div className="bk-en">per unit</div></div>
+                  <div style={{textAlign:"right"}}>
+                    <div className="bv">{dall(r.mode==="minsale"?r.saleM2:toM2price(parseFloat(priceA),priceAUnit,pm2),pm2)}</div>
+                    <div style={{fontFamily:"var(--mono)",fontSize:13,color:"var(--green)",fontWeight:700,marginTop:3}}>{"کل: $"+Number(r.totalSale).toLocaleString()}</div>
+                  </div>
+                </div>
+                <BRow fa="کل مالیات (26%)" en="Income Tax — blended federal+state" val={"−$"+Number(r.totalTax).toLocaleString()} cls="r"/>
+                <div className="brow sep">
+                  <div><div className="bk-fa" style={{color:"var(--gold)"}}>سود خالص کل</div><div className="bk-en">Total Net Profit</div></div>
+                  <div style={{textAlign:"right"}}>
+                    <div className="bv gold">{"$"+Number(r.totalNet).toLocaleString()}</div>
+                    <div style={{fontFamily:"var(--mono)",fontSize:10,color:"var(--tx3)",marginTop:3}}>{dall(r.netM2,pm2)}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="r2" style={{marginTop:4}}>
+              <F fa="وضعیت" en="Status">
+                <select className="sel" value={tStatus} onChange={e=>setTStatus(e.target.value)}>
+                  <option value="C">CONFIRMED</option>
+                  <option value="E">EXECUTED</option>
+                  <option value="X">CANCELLED</option>
+                </select>
+              </F>
+              <div style={{display:"flex",alignItems:"flex-end"}}>
+                <button className="btn-save" onClick={saveT}>💾 ذخیره · Save</button>
+              </div>
+            </div>
+            <div className="principle">IF THIS NUMBER DOES NOT WORK → DON'T BUY<br/>اگر این عدد جور نیست → نخر</div>
+          </>}
+        </>}
+
+        {tab==="trades"&&<>
+          <div style={{padding:"4px 0 14px"}}>
+            <div style={{fontSize:18,fontWeight:800,marginBottom:3,color:"var(--tx)"}}>تاریخچه معاملات</div>
+            <div style={{fontFamily:"var(--mono)",fontSize:8,color:"var(--tx3)",letterSpacing:".1em"}}>TRADE HISTORY · ALL VALUES IN USD</div>
+          </div>
+          {trades.map(t=>(
+            <div key={t.id} className="trade">
+              <div className="trade-top">
+                <div>
+                  <div className="trade-stone">{t.stone}</div>
+                  <div className="trade-route">{(ORIGINS.find(o=>o.code===t.orig)||{flag:"🌍"}).flag} {t.orig} → 🇺🇸 {t.dest}</div>
+                </div>
+                <span className={"sbadge s"+t.status}>{t.status==="E"?"EXECUTED":t.status==="C"?"CONFIRMED":"CANCELLED"}</span>
+              </div>
+              <div className="tgrid">
+                <div><div className="t-lbl">خرید · Buy</div><div className="t-val">{t.buy}</div></div>
+                <div><div className="t-lbl">فروش · Sale</div><div className="t-val">{t.sale}</div></div>
+                <div><div className="t-lbl">سود · Net</div><div className={"t-val "+(String(t.net).startsWith("+")?"dg":"dr")}>{t.net}</div></div>
+              </div>
+              <div style={{fontFamily:"var(--mono)",fontSize:9,color:"var(--tx3)",marginTop:8}}>{t.date}</div>
+            </div>
+          ))}
+        </>}
+      </div>
+      <div className="bsafe"/>
+      {toast&&<div className="toast">{toast}</div>}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
